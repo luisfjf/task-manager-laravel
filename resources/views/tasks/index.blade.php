@@ -1,60 +1,52 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Tareas</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #333; }
-        h1 { color: #1a202c; }
-        form { margin-bottom: 20px; }
-        input[type="text"] { padding: 8px; width: 300px; }
-        button { padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        ul { list-style-type: none; padding: 0; }
-        li { background: #f9f9f9; border: 1px solid #ddd; margin-top: -1px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .task-title.completed { text-decoration: line-through; color: #aaa; }
-        .actions form { display: inline-block; margin-left: 10px; margin-bottom: 0; }
-        .btn-delete { background-color: #f44336; }
-        .btn-complete { background-color: #008CBA; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-    <h1>Mi Gestor de Tareas 📝</h1>
+@section('title', 'Lista de Tareas')
 
-    <form action="{{ route('tasks.store') }}" method="POST">
-        @csrf
-        <input type="text" name="title" placeholder="Añade una nueva tarea..." required>
-        <button type="submit">Añadir Tarea</button>
-    </form>
+@section('content')
+    <h1 class="text-3xl font-semibold mb-6 text-gray-800 text-center">Mi Gestor de Tareas 📝</h1>
 
-    <ul>
-        @forelse ($tasks as $task)
-            <li>
-                <span class="task-title {{ $task->completed ? 'completed' : '' }}">
-                    {{ $task->title }}
-                </span>
-                
-                <div class="actions">
-                    <form action="{{ route('tasks.update', $task) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn-complete">
-                            {{ $task->completed ? 'Marcar Pendiente' : 'Completar' }}
-                        </button>
-                    </form>
+    <div class="max-w-2xl mx-auto">
 
-                    <form action="{{ route('tasks.destroy', $task) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-delete">Eliminar</button>
-                    </form>
-                </div>
-            </li>
-        @empty
-            <li>No hay tareas pendientes.</li>
-        @endforelse
-    </ul>
+        <form action="{{ route('tasks.store') }}" method="POST" class="mb-4">
+            @csrf
+            <div class="flex">
+                <input type="text" name="title" placeholder="Añade una nueva tarea..." required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">Añadir Tarea</button>
+            </div>
+            @error('title')
+                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+            @enderror
+        </form>
 
-</body>
-</html>
+        <ul class="bg-white shadow-md rounded-md overflow-hidden">
+            @forelse ($tasks as $task)
+                <li class="px-4 py-3 border-b last:border-b-0 flex justify-between items-center">
+                    <span class="task-title {{ $task->completed ? 'line-through text-gray-500' : 'text-gray-800' }}">
+                        {{ $task->title }}
+                    </span>
+                    
+                    <div class="actions flex items-center">
+                        <form action="{{ route('tasks.update', $task) }}" method="POST" class="inline-block mr-2">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline text-xs">
+                                {{ $task->completed ? 'Pendiente' : 'Completar' }}
+                            </button>
+                        </form>
+
+                        <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline text-xs">
+                                Eliminar
+                            </button>
+                        </form>
+                    </div>
+                    </li>
+            @empty
+                <li class="px-4 py-3 text-gray-600">No hay tareas pendientes.</li>
+            @endforelse
+        </ul>
+
+    </div>
+    @endsection
