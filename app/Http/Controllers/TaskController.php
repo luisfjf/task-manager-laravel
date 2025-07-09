@@ -64,7 +64,11 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        // Marca la tarea como completada o no completada
+        $task->completed = !$task->completed;
+        $task->save();
+
+        return redirect()->route('tasks.index')->with('success', 'Tarea actualizada.');
     }
 
     /**
@@ -72,6 +76,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete(); // Elimina la tarea de la base de datos
+
+        return redirect()->route('tasks.index')->with('success', 'Tarea eliminada.');
     }
 }
