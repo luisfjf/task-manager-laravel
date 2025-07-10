@@ -1,27 +1,31 @@
 # Gestor de Tareas con Laravel 📝
 
-Este es un proyecto práctico y sencillo para aprender los fundamentos del framework PHP **Laravel**. La aplicación es un gestor de tareas (To-Do List) que permite a los usuarios crear, listar, marcar como completadas y eliminar tareas.
+Este es un proyecto práctico que demuestra cómo construir una aplicación web completa con el framework PHP **Laravel**. La aplicación es un gestor de tareas (To-Do List) multiusuario donde cada persona puede registrarse, iniciar sesión y gestionar su propia lista de tareas de forma privada.
 
-El proyecto está diseñado para ser una introducción clara al ciclo de desarrollo en Laravel, cubriendo desde la instalación y configuración hasta la creación de un CRUD (Create, Read, Update, Delete) funcional.
+El proyecto cubre desde la configuración inicial hasta la implementación de un sistema de autenticación, relaciones en la base de datos y una interfaz de usuario moderna creada con Tailwind CSS.
 
 ---
 ## Características Principales
 
--   **Crear nuevas tareas:** Añadir tareas a la lista a través de un formulario simple.
--   **Listar todas las tareas:** Ver una lista de todas las tareas pendientes y completadas.
--   **Actualizar estado de una tarea:** Marcar una tarea como "Completada" o revertirla a "Pendiente".
--   **Eliminar tareas:** Borrar permanentemente una tarea de la lista.
--   Implementa un ciclo **CRUD** completo para la gestión de tareas.
+-   **Autenticación de Usuarios:** Sistema completo de registro, inicio de sesión, cierre de sesión y recuperación de contraseña gracias a **Laravel Breeze**.
+-   **Gestión de Tareas por Usuario:** Cada usuario tiene su propia lista de tareas. No pueden ver ni modificar las tareas de otros usuarios.
+-   **Ciclo CRUD completo:** Funcionalidad para Crear, Leer, Actualizar (marcar como completada) y Eliminar tareas.
+-   **Interfaz Moderna:** Diseño limpio y responsivo desarrollado con el framework **Tailwind CSS**.
 
 ---
 ## Tecnologías Utilizadas
 
 -   **Backend:** PHP 8.1+ / Laravel 10
+-   **Frontend:**
+    -   Vistas de Blade
+    -   Tailwind CSS
+    -   Vite para la compilación de activos
 -   **Base de Datos:** MySQL
--   **Frontend:** Vistas de Blade (motor de plantillas de Laravel) con HTML5 y CSS3 simple.
+-   **Autenticación:** Laravel Breeze
 -   **Herramientas de desarrollo:**
-    -   Composer para la gestión de dependencias.
-    -   Artisan para la línea de comandos de Laravel.
+    -   Composer
+    -   Artisan
+    -   NPM
 
 ---
 ## Requisitos Previos
@@ -29,6 +33,7 @@ El proyecto está diseñado para ser una introducción clara al ciclo de desarro
 Para poder ejecutar este proyecto, necesitas tener instalado lo siguiente en tu sistema:
 
 -   Un entorno de desarrollo local como **Laragon** (Windows) o **Laravel Herd** (macOS).
+-   **Node.js y NPM**.
 -   **Composer** instalado globalmente.
 -   **Git** instalado.
 
@@ -51,7 +56,12 @@ Sigue estos pasos para poner en funcionamiento el proyecto en tu entorno local:
     composer install
     ```
 
-3.  **Configurar el archivo de entorno:**
+3.  **Instalar dependencias de JavaScript:**
+    ```bash
+    npm install
+    ```
+
+4.  **Configurar el archivo de entorno:**
     Copia el archivo de ejemplo `.env.example` para crear tu propio archivo de configuración `.env`.
     ```bash
     # En Windows (CMD o PowerShell)
@@ -61,34 +71,30 @@ Sigue estos pasos para poner en funcionamiento el proyecto en tu entorno local:
     cp .env.example .env
     ```
 
-4.  **Generar la clave de la aplicación:**
-    Este es un paso de seguridad crucial para cualquier proyecto de Laravel.
+5.  **Generar la clave de la aplicación:**
     ```bash
     php artisan key:generate
     ```
 
-5.  **Configurar la base de datos:**
-    -   Abre tu gestor de bases de datos (HeidiSQL, TablePlus, etc.) y crea una nueva base de datos vacía. Por ejemplo: `gestor_tareas_db`.
-    -   Abre el archivo `.env` y edita las siguientes variables con los datos de tu base de datos:
-        ```env
-        DB_CONNECTION=mysql
-        DB_HOST=127.0.0.1
-        DB_PORT=3306
-        DB_DATABASE=gestor_tareas_db
-        DB_USERNAME=root
-        DB_PASSWORD=
-        ```
+6.  **Configurar la base de datos:**
+    -   Abre tu gestor de bases de datos y crea una nueva base de datos vacía (ej. `gestor_tareas_db`).
+    -   Abre el archivo `.env` y edita las variables `DB_*` con los datos de tu base de datos.
 
-6.  **Ejecutar las migraciones:**
-    Este comando creará todas las tablas necesarias en tu base de datos (incluida la de sesiones).
+7.  **Ejecutar las migraciones:**
+    Este comando creará todas las tablas necesarias (usuarios, tareas, etc.) en tu base de datos.
     ```bash
     php artisan migrate
     ```
 
-7.  **Iniciar el servidor:**
-    -   **Si usas Laragon:** ¡Listo! Puedes acceder al proyecto desde la URL `http://gestor-tareas-laravel.test`.
-    -   **Si no usas la URL automática:** Ejecuta el servidor de desarrollo de Artisan.
+8.  **Iniciar los servidores:**
+    Necesitas dos terminales abiertas:
+    -   En la **primera terminal**, inicia el servidor de desarrollo de Vite para compilar el CSS y JS:
+        ```bash
+        npm run dev
+        ```
+    -   En la **segunda terminal**, inicia el servidor de Laravel para correr la aplicación:
         ```bash
         php artisan serve
         ```
-        Y accede a la aplicación desde `http://127.0.0.1:8000`.
+
+9.  **Accede a la aplicación** desde `http://127.0.0.1:8000` y regístrate para empezar a usarla.
