@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // <-- 1. Importa el Facade Auth
 
 class TaskController extends Controller
 {
@@ -12,16 +13,14 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::latest()->get(); // Obtiene todas las tareas, las más nuevas primero
-        return view('tasks.index', ['tasks' => $tasks]); // Pasa las tareas a la vista
-    }
+        // 2. Obtenemos el usuario de forma explícita
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        // Ahora el editor sabe que $user es un objeto User con una relación "tasks"
+        $tasks = $user->tasks()->latest()->get();
+
+        return view('tasks.index', ['tasks' => $tasks]);
     }
 
     /**
@@ -29,42 +28,30 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        // Validación de los datos del formulario
         $request->validate([
             'title' => 'required|string|max:255',
         ]);
 
-        // Creación de la tarea
-        Task::create([
+        // Esta forma es correcta y eficiente
+        $request->user()->tasks()->create([
             'title' => $request->title,
         ]);
 
-        // Redirección a la lista de tareas con un mensaje de éxito
         return redirect()->route('tasks.index')->with('success', 'Tarea creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
+    // ... (los métodos show y edit no los usamos, los dejamos vacíos)
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Task $task)
     {
-        // Marca la tarea como completada o no completada
+        // 3. Usamos Auth::id() que es más claro para el editor
+        if ($task->user_id !== Auth::id()) {
+            abort(403); // Error de "Acceso Prohibido"
+        }
+
         $task->completed = !$task->completed;
         $task->save();
 
@@ -76,7 +63,12 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->delete(); // Elimina la tarea de la base de datos
+        // 4. Hacemos lo mismo aquí
+        if ($task->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $task->delete();
 
         return redirect()->route('tasks.index')->with('success', 'Tarea eliminada.');
     }
